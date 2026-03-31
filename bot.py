@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import asyncio
 import os
 from aiohttp import web
@@ -9,41 +10,41 @@ from commands import engine
 from database import init_db
 from scheduler import scheduler
 
-# Инициализация бота и диспетчера
+# РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р±РѕС‚Р° Рё РґРёСЃРїРµС‚С‡РµСЂР°
 bot = Bot(token=TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 
-# Подключаем роутеры с командами
+# РџРѕРґРєР»СЋС‡Р°РµРј СЂРѕСѓС‚РµСЂС‹ СЃ РєРѕРјР°РЅРґР°РјРё
 engine.setup_handlers()
 dp.include_router(engine.get_router())
 
-# Обработчик вебхука
+# РћР±СЂР°Р±РѕС‚С‡РёРє РІРµР±С…СѓРєР°
 async def webhook(request):
     json_data = await request.json()
     update = Update(**json_data)
     await dp.feed_update(bot, update)
     return web.Response(text="OK")
 
-# Действия при старте приложения
+# Р”РµР№СЃС‚РІРёСЏ РїСЂРё СЃС‚Р°СЂС‚Рµ РїСЂРёР»РѕР¶РµРЅРёСЏ
 async def on_startup(app):
-    await init_db()                     # создание таблиц БД
-    asyncio.create_task(scheduler())    # запуск фоновой очистки наказаний
+    await init_db()                     # СЃРѕР·РґР°РЅРёРµ С‚Р°Р±Р»РёС† Р‘Р”
+    asyncio.create_task(scheduler())    # Р·Р°РїСѓСЃРє С„РѕРЅРѕРІРѕР№ РѕС‡РёСЃС‚РєРё РЅР°РєР°Р·Р°РЅРёР№
 
-    # Устанавливаем вебхук
+    # РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІРµР±С…СѓРє
     hostname = os.getenv("RENDER_EXTERNAL_HOSTNAME")
     if not hostname:
-        # fallback для локальной разработки
+        # fallback РґР»СЏ Р»РѕРєР°Р»СЊРЅРѕР№ СЂР°Р·СЂР°Р±РѕС‚РєРё
         hostname = "your-app.onrender.com"
     webhook_url = f"https://{hostname}/webhook"
     await bot.set_webhook(webhook_url)
     print(f"Webhook set to {webhook_url}")
 
-# Действия при остановке
+# Р”РµР№СЃС‚РІРёСЏ РїСЂРё РѕСЃС‚Р°РЅРѕРІРєРµ
 async def on_shutdown(app):
     await bot.delete_webhook()
     await bot.session.close()
 
-# Создаём aiohttp приложение
+# РЎРѕР·РґР°С‘Рј aiohttp РїСЂРёР»РѕР¶РµРЅРёРµ
 app = web.Application()
 app.router.add_post('/webhook', webhook)
 app.on_startup.append(on_startup)
