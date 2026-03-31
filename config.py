@@ -1,3 +1,8 @@
-TOKEN = "8553148585:AAHJuHYEr4ufKfoVhJYkSZAbuFnumlPSS2o"
-DATABASE_URL = "postgresql+asyncpg://user:pass@localhost/iris"
-PREFIXES = ["!", ".", "/", "Ирис ", "Ириска "]   
+﻿TOKEN = os.getenv('BOT_TOKEN')
+DATABASE_URL = os.getenv('DATABASE_URL')
+PREFIXES = ["!", ".", "/", "Ирис ", "Ириска "]
+
+if not TOKEN:
+    raise ValueError("BOT_TOKEN не установлен в переменных окружения")
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL не установлен в переменных окружения")
