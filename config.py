@@ -1,4 +1,5 @@
-﻿TOKEN = os.getenv('BOT_TOKEN')
+import os
+TOKEN = os.getenv('BOT_TOKEN')
 DATABASE_URL = os.getenv('DATABASE_URL')
 PREFIXES = ["!", ".", "/", "Ирис ", "Ириска "]
 
